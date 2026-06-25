@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radiografía de Formación · Vida Máxima</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f13;
+  --bg2: #18181f;
+  --bg3: #22222c;
+  --border: rgba(255,255,255,0.08);
+  --text: #f0f0f5;
+  --text2: #9999b3;
+  --text3: #6666888;
+  --accent: #7c6ff7;
+  --accent2: #5c4fe8;
+  --accent-glow: rgba(124,111,247,0.25);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ---- HERO / INTRO ---- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,111,247,0.18) 0%, transparent 70%);
+}
+
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124,111,247,0.15);
+  border: 1px solid rgba(124,111,247,0.3);
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: #a99ff8;
+  margin-bottom: 2rem;
+  letter-spacing: 0.04em;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  max-width: 680px;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text2);
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+
+.stats-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+.stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.form-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+}
+
+.form-card label {
+  display: block;
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+.form-card label:first-of-type { margin-top: 0; }
+
+.form-card input, .form-card select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-card input:focus, .form-card select:focus {
+  border-color: var(--accent);
+}
+.form-card select option { background: #22222c; }
+
+.btn-start {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-start:hover { background: var(--accent2); }
+.btn-start:active { transform: scale(0.98); }
+
+/* ---- ASSESSMENT ---- */
+.assessment-wrap {
+  min-height: 100vh;
+  display: none;
+  flex-direction: column;
+}
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(15,15,19,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.top-bar .brand { font-size: 13px; color: var(--text2); white-space: nowrap; }
+.progress-bar-outer {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-bar-inner {
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), #a78bfa);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.prog-label { font-size: 13px; color: var(--text2); white-space: nowrap; }
+
+.assessment-body {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.q-panel {
+  width: 100%;
+  max-width: 680px;
+}
+
+.area-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.q-panel h2 {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.q-panel .q-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 2rem;
+}
+
+.q-item { margin-bottom: 1.5rem; }
+.q-item p {
+  font-size: 15px;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+
+.scale-row {
+  display: flex;
+  gap: 8px;
+}
+
+.scale-btn {
+  flex: 1;
+  aspect-ratio: 1;
+  max-width: 60px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scale-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+.scale-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+.nav-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 2.5rem;
+}
+
+.btn-nav-back {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: var(--text2);
+  font-size: 15px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s;
+}
+.btn-nav-back:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+.btn-nav-next {
+  flex: 1;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s;
+}
+.btn-nav-next:hover { background: var(--accent2); }
+
+/* ---- OPEN QUESTIONS ---- */
+.open-panel {
+  width: 100%;
+  max-width: 680px;
+}
+.open-panel h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.open-panel .sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; }
+
+.open-q { margin-bottom: 1.5rem; }
+.open-q label {
+  display: block;
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.open-q textarea {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 90px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.open-q textarea:focus { border-color: var(--accent); }
+
+/* ---- RESULTS ---- */
+.results-wrap {
+  min-height: 100vh;
+  display: none;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,111,247,0.15) 0%, transparent 65%);
+  padding: 4rem 1.5rem;
+}
+
+.results-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.isd-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.isd-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) 0%, transparent 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.isd-circle::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+.isd-num {
+  position: relative;
+  z-index: 1;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+.isd-hero h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.isd-hero .level { font-size: 1rem; color: var(--accent); font-weight: 600; }
+
+.result-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.result-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text2);
+  margin-bottom: 1.2rem;
+}
+
+.rbar { margin-bottom: 12px; }
+.rbar-top { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; }
+.rbar-top span:first-child { color: var(--text); }
+.rbar-top span:last-child { color: var(--text2); font-weight: 600; }
+.rbar-bg { background: rgba(255,255,255,0.06); border-radius: 99px; height: 6px; overflow: hidden; }
+.rbar-fill { height: 6px; border-radius: 99px; transition: width 0.6s ease; }
+
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.tag.alert { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+.tag.good { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.25); }
+.tag.neutral { background: rgba(124,111,247,0.15); color: #a99ff8; border: 1px solid rgba(124,111,247,0.25); }
+
+.next-step-box {
+  background: linear-gradient(135deg, rgba(124,111,247,0.15), rgba(92,79,232,0.08));
+  border: 1px solid rgba(124,111,247,0.25);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+.next-step-box .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px; }
+.next-step-box p { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+.btn-reset {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  color: var(--text2);
+  font-size: 15px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  margin-top: 12px;
+  transition: border-color 0.2s;
+  text-align: center;
+}
+.btn-reset:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+/* ---- DASHBOARD ---- */
+.dash-wrap {
+  min-height: 100vh;
+  display: none;
+  padding: 0;
+}
+
+.dash-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.dash-header h1 { font-size: 1.2rem; font-weight: 700; color: #fff; }
+.dash-header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+.dash-body { padding: 2rem; max-width: 900px; margin: 0 auto; }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.metric-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.metric-card .val { font-size: 2rem; font-weight: 700; color: var(--accent); }
+.metric-card .lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+.dash-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.dash-section h2 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text2);
+  margin-bottom: 1.2rem;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.person-row:last-child { border-bottom: none; }
+.avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(124,111,247,0.2);
+  color: #a99ff8;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.person-info { flex: 1; min-width: 0; }
+.person-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.person-meta { font-size: 12px; color: var(--text2); }
+.person-isd {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.alert-box {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #fde68a;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.good-box {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #86efac;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dash-tab-row {
+  display: flex;
+  gap: 0;
+  background: var(--bg3);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+}
+.dash-tab {
+  padding: 8px 20px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.dash-tab.active { background: var(--accent); color: #fff; }
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #fca5a5;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+.dash-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  margin-right: 8px;
+  margin-top: 4px;
+  transition: background 0.2s;
+}
+.dash-btn:hover { background: var(--accent2); }
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text2);
+}
+.empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+.empty-state p { font-size: 15px; line-height: 1.7; }
+
+/* ---- NAV LINK ---- */
+.dash-link {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  z-index: 100;
+  transition: all 0.2s;
+  display: none;
+}
+.dash-link:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 520px) {
+  .scale-btn { font-size: 13px; }
+  .hero h1 { font-size: 1.8rem; }
+  .assessment-body, .results-wrap { padding: 1.5rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO / INTRO ===================== -->
+<div id="screen-intro">
+  <div class="hero">
+    <div class="logo-badge">✦ Vida Máxima</div>
+    <h1>¿Cómo está tu vida<br><span>como discípulo?</span></h1>
+    <p>Esta radiografía evalúa tu salud espiritual en 8 dimensiones clave. Son 24 preguntas y toma menos de 5 minutos.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">8</div><div class="stat-lbl">Áreas evaluadas</div></div>
+      <div class="stat"><div class="stat-num">24</div><div class="stat-lbl">Preguntas</div></div>
+      <div class="stat"><div class="stat-num">~5</div><div class="stat-lbl">Minutos</div></div>
+    </div>
+    <div class="form-card">
+      <label>Tu nombre completo</label>
+      <input type="text" id="inp-name" placeholder="Ej. María González" />
+      <label>Rol en Vida Máxima</label>
+      <select id="inp-role">
+        <option value="">Selecciona tu rol...</option>
+        <option>Círculo íntimo</option>
+        <option>Coordinador</option>
+        <option>Líder</option>
+        <option>Voluntario</option>
+        <option>Congregante</option>
+      </select>
+      <button class="btn-start" onclick="startForm()">Comenzar mi radiografía →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ASSESSMENT ===================== -->
+<div id="screen-assessment" class="assessment-wrap">
+  <div class="top-bar">
+    <span class="brand">Vida Máxima · ISD</span>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="prog-bar" style="width:12.5%"></div>
+    </div>
+    <span class="prog-label" id="prog-label">1 / 8</span>
+  </div>
+  <div class="assessment-body">
+    <div class="q-panel" id="q-panel"></div>
+  </div>
+</div>
+
+<!-- ===================== OPEN QUESTIONS ===================== -->
+<div id="screen-open" style="display:none; min-height:100vh; display:none; align-items:flex-start; justify-content:center; padding:4rem 1.5rem; background:var(--bg);">
+  <div class="open-panel">
+    <div class="logo-badge" style="margin-bottom:1.5rem">Últimas preguntas</div>
+    <h2>Reflexión final</h2>
+    <p class="sub">Estas preguntas abiertas son las más valiosas para el liderazgo pastoral. No hay respuestas correctas.</p>
+    <div class="open-q">
+      <label>1. ¿Qué crees que estamos haciendo muy bien como iglesia?</label>
+      <textarea id="qa" placeholder="Comparte lo que más te ha impactado o ayudado..."></textarea>
+    </div>
+    <div class="open-q">
+      <label>2. ¿Qué sientes que hemos dejado de hacer y antes nos ayudaba a crecer?</label>
+      <textarea id="qb" placeholder="Sé honesto/a. Tu perspectiva es valiosa..."></textarea>
+    </div>
+    <div class="open-q">
+      <label>3. Si fueras el pastor por seis meses, ¿qué fortalecerías primero?</label>
+      <textarea id="qc" placeholder="Tu visión importa..."></textarea>
+    </div>
+    <div class="nav-row" style="margin-top:2rem">
+      <button class="btn-nav-back" onclick="goToArea(7)">← Atrás</button>
+      <button class="btn-nav-next" onclick="submitForm()">Ver mi perfil →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RESULTS ===================== -->
+<div id="screen-results" class="results-wrap">
+  <div class="results-inner">
+    <div class="isd-hero">
+      <div class="isd-circle" id="isd-circle">
+        <span class="isd-num" id="isd-num">—</span>
+      </div>
+      <h2 id="res-name"></h2>
+      <div class="level" id="res-level"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>Resultados por área</h3>
+      <div id="res-bars"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>Tu perfil</h3>
+      <div class="tags-wrap" id="res-tags"></div>
+      <div class="next-step-box">
+        <div class="label">Siguiente paso sugerido</div>
+        <p id="res-next"></p>
+      </div>
+    </div>
+
+    <button class="btn-reset" onclick="resetAll()">↩ Volver a empezar</button>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD ===================== -->
+<div id="screen-dash" class="dash-wrap">
+  <div class="dash-header">
+    <div>
+      <h1>Dashboard Pastoral · Vida Máxima</h1>
+      <p>Vista del equipo — Índice de Salud del Discípulo</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-danger" onclick="clearAll()">Borrar todo</button>
+      <button class="dash-btn" onclick="showScreen('intro')">← Volver al formulario</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div id="dash-content"></div>
+  </div>
+</div>
+
+<!-- Floating button to open dashboard -->
+<button class="dash-link" id="dash-float-btn" onclick="openDash()">📊 Dashboard pastoral</button>
+
+<script>
+const STORAGE_KEY = 'isd-vm-responses-v1';
+
+const AREAS = [
+  { key:'vision', label:'Visión', color:'#7c6ff7', chip:'rgba(124,111,247,0.2)', chipText:'#c4bffa',
+    qs:['Puedo explicar con mis propias palabras hacia dónde va Vida Máxima.','Entiendo por qué existe Vida Máxima y cuál es su misión.','Mis decisiones diarias reflejan la visión de la iglesia.'] },
+  { key:'evangelio', label:'Evangelio', color:'#22c55e', chip:'rgba(34,197,94,0.15)', chipText:'#86efac',
+    qs:['Estoy creciendo activamente en mi relación personal con Cristo.','Comprendo el evangelio y puedo explicarlo claramente.','Comparto mi fe con personas que no conocen a Cristo.'] },
+  { key:'discipulado', label:'Discipulado', color:'#38bdf8', chip:'rgba(56,189,248,0.15)', chipText:'#7dd3fc',
+    qs:['Tengo un plan claro para seguir creciendo espiritualmente.','Sé cuál es mi siguiente paso concreto de formación.','Recibo acompañamiento espiritual regular.'] },
+  { key:'mentoria', label:'Mentoría', color:'#fb923c', chip:'rgba(251,146,60,0.15)', chipText:'#fdba74',
+    qs:['Hay alguien que me conoce profundamente y camina conmigo.','Rindo cuentas de mi vida espiritual con regularidad.','Alguien me anima, me corrige y me impulsa a crecer.'] },
+  { key:'comunidad', label:'Comunidad', color:'#e879f9', chip:'rgba(232,121,249,0.15)', chipText:'#f0abfc',
+    qs:['Tengo amistades profundas dentro de la iglesia.','Me siento genuinamente parte de Vida Máxima.','Sé a quién acudir cuando enfrento una dificultad.'] },
+  { key:'servicio', label:'Servicio', color:'#4ade80', chip:'rgba(74,222,128,0.15)', chipText:'#86efac',
+    qs:['Conozco mis dones y talentos espirituales.','Sirvo en el área donde puedo aportar más.','Entiendo que servir es parte del discipulado, no solo una tarea.'] },
+  { key:'liderazgo', label:'Liderazgo', color:'#fbbf24', chip:'rgba(251,191,36,0.15)', chipText:'#fde68a',
+    qs:['Estoy invirtiendo activamente en el desarrollo de otras personas.','Delego responsabilidades y formo a otros para que crezcan.','Me veo como un formador de personas, no solo un ejecutor de tareas.'] },
+  { key:'multiplicacion', label:'Multiplicación', color:'#f472b6', chip:'rgba(244,114,182,0.15)', chipText:'#fbcfe8',
+    qs:['Estoy discipulando activamente a alguien en este momento.','Puedo nombrar a una persona a quien estoy formando.','Mi meta no es solo crecer yo, sino que otros también crezcan.'] }
+];
+
+const STEPS = {
+  vision: 'Profundiza en la visión de Vida Máxima. Conversa con tu pastor sobre el propósito de la iglesia.',
+  evangelio: 'Busca un espacio concreto para compartir tu fe. Considera unirte a un grupo de evangelismo esta semana.',
+  discipulado: 'Define tu siguiente paso de formación. Habla con un líder para trazarlo juntos con claridad.',
+  mentoria: 'Identifica a alguien que pueda acompañarte espiritualmente y da el primer paso para pedírselo.',
+  comunidad: 'Comprométete con un grupo pequeño donde puedas conocer y ser conocido en profundidad.',
+  servicio: 'Explora tus dones con el área de servicio para encontrar el lugar donde aportas más.',
+  liderazgo: 'Identifica a una persona en quien puedas invertir. El liderazgo comienza con una relación.',
+  multiplicacion: 'Elige a una persona y comienza a caminar intencionalmente con ella esta semana.'
+};
+
+let cur = 0;
+let scores = {};
+let userName = '', userRole = '';
+AREAS.forEach(a => scores[a.key] = [0,0,0]);
+
+function showScreen(id) {
+  ['intro','assessment','open','results','dash'].forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if (!el) return;
+    if (s === 'assessment' || s === 'dash') {
+      el.style.display = id === s ? 'flex' : 'none';
+    } else if (s === 'open') {
+      el.style.display = id === s ? 'flex' : 'none';
+    } else {
+      el.style.display = id === s ? 'block' : 'none';
+    }
+  });
+  const floatBtn = document.getElementById('dash-float-btn');
+  floatBtn.style.display = (id === 'intro' || id === 'assessment' || id === 'open') ? 'block' : 'none';
+}
+
+function startForm() {
+  userName = document.getElementById('inp-name').value.trim();
+  userRole = document.getElementById('inp-role').value;
+  if (!userName) { alert('Por favor escribe tu nombre.'); return; }
+  if (!userRole) { alert('Por favor selecciona tu rol.'); return; }
+  cur = 0;
+  AREAS.forEach(a => scores[a.key] = [0,0,0]);
+  showScreen('assessment');
+  renderArea();
+}
+
+function renderArea() {
+  const a = AREAS[cur];
+  document.getElementById('prog-bar').style.width = Math.round((cur+1)/8*100) + '%';
+  document.getElementById('prog-label').textContent = (cur+1) + ' / 8';
+
+  let html = `<div class="area-chip" style="background:${a.chip};color:${a.chipText}">${a.label}</div>`;
+  html += `<h2>${a.label}</h2>`;
+  html += `<p class="q-sub">Califica del 1 (muy poco) al 5 (totalmente) cada afirmación.</p>`;
+
+  a.qs.forEach((q, qi) => {
+    const val = scores[a.key][qi];
+    html += `<div class="q-item"><p>${q}</p><div class="scale-row">`;
+    for (let s = 1; s <= 5; s++) {
+      html += `<button class="scale-btn${val===s?' active':''}" onclick="setStar('${a.key}',${qi},${s})">${s}</button>`;
+    }
+    html += `</div><div class="scale-labels"><span>Muy poco</span><span>Totalmente</span></div></div>`;
+  });
+
+  html += `<div class="nav-row">`;
+  if (cur > 0) html += `<button class="btn-nav-back" onclick="prevArea()">← Atrás</button>`;
+  html += `<button class="btn-nav-next" onclick="nextArea()">${cur === 7 ? 'Preguntas finales →' : 'Siguiente →'}</button></div>`;
+
+  document.getElementById('q-panel').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function setStar(key, qi, v) {
+  scores[key][qi] = v;
+  renderArea();
+}
+
+function prevArea() { if (cur > 0) { cur--; renderArea(); } }
+
+function nextArea() {
+  const answered = scores[AREAS[cur].key].filter(v => v > 0).length;
+  if (answered < 3) { alert('Por favor responde las 3 preguntas antes de continuar.'); return; }
+  if (cur === 7) { showScreen('open'); window.scrollTo(0,0); }
+  else { cur++; renderArea(); }
+}
+
+function goToArea(n) { cur = n; showScreen('assessment'); renderArea(); }
+
+function submitForm() {
+  let areaScores = {};
+  let total = 0;
+  AREAS.forEach(a => {
+    const pct = Math.round(scores[a.key].reduce((x,y)=>x+y,0)/15*100);
+    areaScores[a.key] = pct;
+    total += pct;
+  });
+  const isd = Math.round(total / 8);
+  let level;
+  if (isd >= 80) level = 'Discípulo maduro';
+  else if (isd >= 60) level = 'En crecimiento activo';
+  else if (isd >= 40) level = 'Conectado pero en desarrollo';
+  else level = 'Etapa inicial del camino';
+
+  // Circle visual
+  const deg = Math.round(isd / 100 * 360);
+  document.getElementById('isd-circle').style.background =
+    `conic-gradient(#7c6ff7 ${deg}deg, rgba(255,255,255,0.06) ${deg}deg)`;
+  document.getElementById('isd-num').textContent = isd + '%';
+  document.getElementById('res-name').textContent = 'Tu ISD, ' + userName.split(' ')[0];
+  document.getElementById('res-level').textContent = level;
+
+  // Bars
+  let bars = '';
+  AREAS.forEach(a => {
+    bars += `<div class="rbar">
+      <div class="rbar-top"><span>${a.label}</span><span>${areaScores[a.key]}%</span></div>
+      <div class="rbar-bg"><div class="rbar-fill" style="width:${areaScores[a.key]}%;background:${a.color}"></div></div>
+    </div>`;
+  });
+  document.getElementById('res-bars').innerHTML = bars;
+
+  // Tags
+  let tags = [];
+  if (areaScores.mentoria < 50) tags.push({t:'Sin mentor activo', cls:'alert'});
+  if (areaScores.discipulado < 50) tags.push({t:'Necesita ruta de discipulado', cls:'alert'});
+  if (areaScores.multiplicacion < 50) tags.push({t:'Aún no multiplica', cls:'alert'});
+  if (areaScores.liderazgo >= 70) tags.push({t:'Potencial de liderazgo', cls:'good'});
+  if (areaScores.multiplicacion >= 70) tags.push({t:'Listo para mentorear', cls:'good'});
+  if (areaScores.comunidad < 50) tags.push({t:'Comunidad poco profunda', cls:'alert'});
+  if (tags.length === 0) tags.push({t:'Perfil equilibrado', cls:'neutral'});
+  document.getElementById('res-tags').innerHTML = tags.map(tg =>
+    `<span class="tag ${tg.cls}">${tg.t}</span>`).join('');
+
+  const weakest = Object.entries(areaScores).sort((a,b)=>a[1]-b[1])[0];
+  document.getElementById('res-next').textContent = STEPS[weakest[0]];
+
+  // Save
+  const record = {
+    name: userName, role: userRole, isd, level, scores: areaScores,
+    qa: document.getElementById('qa').value,
+    qb: document.getElementById('qb').value,
+    qc: document.getElementById('qc').value,
+    date: new Date().toLocaleDateString('es-MX')
+  };
+  saveRecord(record);
+  showScreen('results');
+  window.scrollTo(0,0);
+}
+
+function saveRecord(rec) {
+  try {
+    const existing = localStorage.getItem(STORAGE_KEY);
+    let all = existing ? JSON.parse(existing) : [];
+    all = all.filter(r => r.name !== rec.name);
+    all.push(rec);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  } catch(e) {}
+}
+
+function openDash() {
+  showScreen('dash');
+  renderDash();
+}
+
+function renderDash() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const all = raw ? JSON.parse(raw) : [];
+
+  if (!all.length) {
+    document.getElementById('dash-content').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📊</div>
+        <p>Aún no hay respuestas guardadas.<br>Comparte esta página con tu equipo para comenzar a recopilar datos.</p>
+      </div>`;
+    return;
+  }
+
+  const n = all.length;
+  const avgIsd = Math.round(all.reduce((s,r)=>s+r.isd,0)/n);
+  let areaAvgs = {};
+  AREAS.forEach(a => { areaAvgs[a.key] = Math.round(all.reduce((s,r)=>s+(r.scores[a.key]||0),0)/n); });
+  const weakArea = AREAS.reduce((p,a)=>areaAvgs[a.key]<areaAvgs[p.key]?a:p);
+  const noMentor = all.filter(r=>(r.scores.mentoria||0)<50).length;
+  const noMulti = all.filter(r=>(r.scores.multiplicacion||0)<50).length;
+
+  let metricsHtml = `
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="val">${n}</div><div class="lbl">Personas evaluadas</div></div>
+      <div class="metric-card"><div class="val">${avgIsd}%</div><div class="lbl">ISD promedio del equipo</div></div>
+      <div class="metric-card"><div class="val">${areaAvgs[weakArea.key]}%</div><div class="lbl">Área más débil · ${weakArea.label}</div></div>
+      <div class="metric-card"><div class="val">${Math.round(noMentor/n*100)}%</div><div class="lbl">Sin mentor activo</div></div>
+    </div>`;
+
+  let barsHtml = '<div class="dash-section"><h2>Promedios por área</h2>';
+  AREAS.forEach(a => {
+    barsHtml += `<div class="rbar">
+      <div class="rbar-top"><span>${a.label}</span><span>${areaAvgs[a.key]}%</span></div>
+      <div class="rbar-bg"><div class="rbar-fill" style="width:${areaAvgs[a.key]}%;background:${a.color}"></div></div>
+    </div>`;
+  });
+  barsHtml += '</div>';
+
+  let alertsHtml = '<div class="dash-section"><h2>Alertas pastorales</h2>';
+  if (noMentor > 0) alertsHtml += `<div class="alert-box">⚠️ <span><strong>${noMentor} de ${n} personas</strong> no tienen un mentor activo (Mentoría &lt; 50%).</span></div>`;
+  if (noMulti > 0) alertsHtml += `<div class="alert-box">⚠️ <span><strong>${noMulti} de ${n}</strong> no están discipulando a nadie aún (Multiplicación &lt; 50%).</span></div>`;
+  if (avgIsd >= 70) alertsHtml += `<div class="good-box">✓ El ISD promedio del equipo es saludable (${avgIsd}%).</div>`;
+  if (noMentor === 0 && noMulti === 0) alertsHtml += `<div class="good-box">✓ Sin alertas críticas. El equipo está en buen estado.</div>`;
+  alertsHtml += '</div>';
+
+  const sorted = [...all].sort((a,b)=>b.isd-a.isd);
+  let peopleHtml = '<div class="dash-section"><h2>Personas registradas</h2>';
+  sorted.forEach(r => {
+    const initials = r.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+    const weakKey = Object.entries(r.scores).sort((a,b)=>a[1]-b[1])[0][0];
+    const weakAreaObj = AREAS.find(a=>a.key===weakKey);
+    peopleHtml += `<div class="person-row">
+      <div class="avatar">${initials}</div>
+      <div class="person-info">
+        <div class="person-name">${r.name}</div>
+        <div class="person-meta">${r.role} · ${r.date} · Área más débil: ${weakAreaObj.label} (${r.scores[weakKey]}%)</div>
+      </div>
+      <div class="person-isd">${r.isd}%</div>
+    </div>`;
+  });
+  peopleHtml += '</div>';
+
+  // Open questions summary
+  let openHtml = '<div class="dash-section"><h2>Respuestas abiertas destacadas</h2>';
+  all.filter(r=>r.qb && r.qb.trim()).slice(0,5).forEach(r => {
+    openHtml += `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${r.name} · "${r.qb.trim().substring(0,200)}${r.qb.length>200?'...':''}"</div>
+    </div>`;
+  });
+  if (!all.some(r=>r.qb && r.qb.trim())) openHtml += '<p style="font-size:14px;color:var(--text2)">Aún no hay respuestas abiertas.</p>';
+  openHtml += '</div>';
+
+  document.getElementById('dash-content').innerHTML = metricsHtml + alertsHtml + barsHtml + peopleHtml + openHtml;
+}
+
+function clearAll() {
+  if (!confirm('¿Borrar todos los datos? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  renderDash();
+}
+
+function resetAll() {
+  AREAS.forEach(a => scores[a.key] = [0,0,0]);
+  document.getElementById('qa').value = '';
+  document.getElementById('qb').value = '';
+  document.getElementById('qc').value = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-role').value = '';
+  showScreen('intro');
+  window.scrollTo(0,0);
+}
+
+// Init
+showScreen('intro');
+</script>
+</body>
+</html>
