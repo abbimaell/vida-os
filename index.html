@@ -646,6 +646,10 @@ body {
     <div class="form-card">
       <label>Tu nombre completo</label>
       <input type="text" id="inp-name" placeholder="Ej. María González" />
+      <label>Correo electrónico</label>
+      <input type="email" id="inp-email" placeholder="ejemplo@correo.com" required />
+      <label>Teléfono (opcional)</label>
+      <input type="tel" id="inp-phone" placeholder="7711234567" />
       <label>Rol en Vida Máxima</label>
       <select id="inp-role">
         <option value="">Selecciona tu rol...</option>
@@ -749,7 +753,7 @@ body {
 <button class="dash-link" id="dash-float-btn" onclick="openDash()">📊 Dashboard pastoral</button>
 
 <script>
-const STORAGE_KEY = 'isd-vm-responses-v1';
+const API_ENDPOINT = '/wp-json/vida-os/v1/assessment';
 
 const AREAS = [
   { key:'vision', label:'Visión', color:'#7c6ff7', chip:'rgba(124,111,247,0.2)', chipText:'#c4bffa',
@@ -783,7 +787,7 @@ const STEPS = {
 
 let cur = 0;
 let scores = {};
-let userName = '', userRole = '';
+let userName = '', userEmail = '', userPhone = '', userRole = '';
 AREAS.forEach(a => scores[a.key] = [0,0,0]);
 
 function showScreen(id) {
@@ -804,8 +808,13 @@ function showScreen(id) {
 
 function startForm() {
   userName = document.getElementById('inp-name').value.trim();
+  const emailInput = document.getElementById('inp-email');
+  userEmail = emailInput.value.trim();
+  userPhone = document.getElementById('inp-phone').value.trim();
   userRole = document.getElementById('inp-role').value;
   if (!userName) { alert('Por favor escribe tu nombre.'); return; }
+  if (!userEmail) { alert('Por favor escribe tu correo electrónico.'); return; }
+  if (!emailInput.checkValidity()) { alert('Por favor escribe un correo electrónico válido.'); return; }
   if (!userRole) { alert('Por favor selecciona tu rol.'); return; }
   cur = 0;
   AREAS.forEach(a => scores[a.key] = [0,0,0]);
@@ -855,7 +864,7 @@ function nextArea() {
 
 function goToArea(n) { cur = n; showScreen('assessment'); renderArea(); }
 
-function submitForm() {
+async function submitForm() {
   let areaScores = {};
   let total = 0;
   AREAS.forEach(a => {
@@ -905,25 +914,53 @@ function submitForm() {
 
   // Save
   const record = {
-    name: userName, role: userRole, isd, level, scores: areaScores,
-    qa: document.getElementById('qa').value,
-    qb: document.getElementById('qb').value,
-    qc: document.getElementById('qc').value,
-    date: new Date().toLocaleDateString('es-MX')
+    email: userEmail,
+    display_name: userName,
+    evaluation_period: '2026-02',
+    responses: {
+      name: userName,
+      phone: userPhone,
+      role: userRole,
+      isd,
+      level,
+      scores: areaScores,
+      qa: document.getElementById('qa').value,
+      qb: document.getElementById('qb').value,
+      qc: document.getElementById('qc').value,
+      date: new Date().toLocaleDateString('es-MX')
+    }
   };
-  saveRecord(record);
+  try {
+    await saveAssessment(record);
+  } catch(e) {
+    return;
+  }
+
   showScreen('results');
   window.scrollTo(0,0);
 }
 
-function saveRecord(rec) {
+async function saveAssessment(record) {
   try {
-    const existing = localStorage.getItem(STORAGE_KEY);
-    let all = existing ? JSON.parse(existing) : [];
-    all = all.filter(r => r.name !== rec.name);
-    all.push(rec);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch(e) {}
+    const response = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(record)
+    });
+    const data = await response.json();
+
+    if (!response.ok || data.success !== true) {
+      throw new Error(data.message || 'Invalid API response.');
+    }
+
+    return data;
+  } catch(e) {
+    console.error('Error guardando evaluación:', e);
+    alert('No fue posible guardar tu evaluación.\nPor favor intenta nuevamente.');
+    throw e;
+  }
 }
 
 function openDash() {
@@ -931,85 +968,16 @@ function openDash() {
   renderDash();
 }
 
-function renderDash() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  const all = raw ? JSON.parse(raw) : [];
-
-  if (!all.length) {
-    document.getElementById('dash-content').innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📊</div>
-        <p>Aún no hay respuestas guardadas.<br>Comparte esta página con tu equipo para comenzar a recopilar datos.</p>
-      </div>`;
-    return;
-  }
-
-  const n = all.length;
-  const avgIsd = Math.round(all.reduce((s,r)=>s+r.isd,0)/n);
-  let areaAvgs = {};
-  AREAS.forEach(a => { areaAvgs[a.key] = Math.round(all.reduce((s,r)=>s+(r.scores[a.key]||0),0)/n); });
-  const weakArea = AREAS.reduce((p,a)=>areaAvgs[a.key]<areaAvgs[p.key]?a:p);
-  const noMentor = all.filter(r=>(r.scores.mentoria||0)<50).length;
-  const noMulti = all.filter(r=>(r.scores.multiplicacion||0)<50).length;
-
-  let metricsHtml = `
-    <div class="metrics-grid">
-      <div class="metric-card"><div class="val">${n}</div><div class="lbl">Personas evaluadas</div></div>
-      <div class="metric-card"><div class="val">${avgIsd}%</div><div class="lbl">ISD promedio del equipo</div></div>
-      <div class="metric-card"><div class="val">${areaAvgs[weakArea.key]}%</div><div class="lbl">Área más débil · ${weakArea.label}</div></div>
-      <div class="metric-card"><div class="val">${Math.round(noMentor/n*100)}%</div><div class="lbl">Sin mentor activo</div></div>
-    </div>`;
-
-  let barsHtml = '<div class="dash-section"><h2>Promedios por área</h2>';
-  AREAS.forEach(a => {
-    barsHtml += `<div class="rbar">
-      <div class="rbar-top"><span>${a.label}</span><span>${areaAvgs[a.key]}%</span></div>
-      <div class="rbar-bg"><div class="rbar-fill" style="width:${areaAvgs[a.key]}%;background:${a.color}"></div></div>
-    </div>`;
-  });
-  barsHtml += '</div>';
-
-  let alertsHtml = '<div class="dash-section"><h2>Alertas pastorales</h2>';
-  if (noMentor > 0) alertsHtml += `<div class="alert-box">⚠️ <span><strong>${noMentor} de ${n} personas</strong> no tienen un mentor activo (Mentoría &lt; 50%).</span></div>`;
-  if (noMulti > 0) alertsHtml += `<div class="alert-box">⚠️ <span><strong>${noMulti} de ${n}</strong> no están discipulando a nadie aún (Multiplicación &lt; 50%).</span></div>`;
-  if (avgIsd >= 70) alertsHtml += `<div class="good-box">✓ El ISD promedio del equipo es saludable (${avgIsd}%).</div>`;
-  if (noMentor === 0 && noMulti === 0) alertsHtml += `<div class="good-box">✓ Sin alertas críticas. El equipo está en buen estado.</div>`;
-  alertsHtml += '</div>';
-
-  const sorted = [...all].sort((a,b)=>b.isd-a.isd);
-  let peopleHtml = '<div class="dash-section"><h2>Personas registradas</h2>';
-  sorted.forEach(r => {
-    const initials = r.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-    const weakKey = Object.entries(r.scores).sort((a,b)=>a[1]-b[1])[0][0];
-    const weakAreaObj = AREAS.find(a=>a.key===weakKey);
-    peopleHtml += `<div class="person-row">
-      <div class="avatar">${initials}</div>
-      <div class="person-info">
-        <div class="person-name">${r.name}</div>
-        <div class="person-meta">${r.role} · ${r.date} · Área más débil: ${weakAreaObj.label} (${r.scores[weakKey]}%)</div>
-      </div>
-      <div class="person-isd">${r.isd}%</div>
-    </div>`;
-  });
-  peopleHtml += '</div>';
-
-  // Open questions summary
-  let openHtml = '<div class="dash-section"><h2>Respuestas abiertas destacadas</h2>';
-  all.filter(r=>r.qb && r.qb.trim()).slice(0,5).forEach(r => {
-    openHtml += `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${r.name} · "${r.qb.trim().substring(0,200)}${r.qb.length>200?'...':''}"</div>
-    </div>`;
-  });
-  if (!all.some(r=>r.qb && r.qb.trim())) openHtml += '<p style="font-size:14px;color:var(--text2)">Aún no hay respuestas abiertas.</p>';
-  openHtml += '</div>';
-
-  document.getElementById('dash-content').innerHTML = metricsHtml + alertsHtml + barsHtml + peopleHtml + openHtml;
+async function renderDash() {
+	document.getElementById('dash-content').innerHTML = `
+		<div class="empty-state">
+			<div class="icon">📊</div>
+			<p>El dashboard se gestionará desde VIDA OS.<br>Las métricas estarán disponibles cuando el servicio del dashboard esté conectado.</p>
+		</div>`;
 }
 
-function clearAll() {
-  if (!confirm('¿Borrar todos los datos? Esta acción no se puede deshacer.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  renderDash();
+async function clearAll() {
+	alert('El borrado de evaluaciones se gestionará desde VIDA OS.');
 }
 
 function resetAll() {
